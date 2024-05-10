@@ -2,6 +2,7 @@ package com.guvi.springjfsjunitdemo.service;
 
 import com.guvi.springjfsjunitdemo.entity.Employee;
 import com.guvi.springjfsjunitdemo.repository.EmployeeRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,5 +32,25 @@ public class EmployeeService {
     //service delete an emp by id
     public  void deleteEmployee(Long id){
         employeeRepository.deleteById(id);
+    }
+
+
+    //Update an employee
+    public Employee updateEmployee(Employee updatedEmployee){
+        Optional<Employee> existbyId = employeeRepository.findById(updatedEmployee.getId());//101
+        //check if employee exisit or not
+        if(existbyId.isPresent()){
+            //update the data-
+            Employee existemployee = existbyId.get();
+            //update the data
+            BeanUtils.copyProperties(updatedEmployee,existemployee,"id");
+            return  employeeRepository.save(existemployee);
+        }else{
+            return  null;
+        }
+    }
+
+    public  List<Employee> getEmployeeByDepartment(String department){
+        return employeeRepository.findByDepartment(department);
     }
 }
